@@ -1,9 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {createContext, useEffect, useState} from 'react';
 import './App.css';
 import ManageBar from "../features/ManageBar";
 import UserTable from "../features/UserTable";
 import axios, {AxiosResponse} from "axios";
 import {ManageMsg} from "../common";
+
+export const ManageContext = createContext<ManageMsg | undefined>(undefined)
 
 function App() {
     const [manageInfo, setManageInfo] = useState<ManageMsg>()
@@ -28,12 +30,14 @@ function App() {
         })
     }, [])
 
-  return (
-    <div className="App">
-      <ManageBar />
-      <UserTable manageInfo={manageInfo}/>
-    </div>
-  );
+    return (
+        <ManageContext.Provider value={manageInfo}>
+            <div className="App">
+                <ManageBar/>
+                <UserTable manageInfo={manageInfo}/>
+            </div>
+        </ManageContext.Provider>
+    );
 }
 
 export default App;

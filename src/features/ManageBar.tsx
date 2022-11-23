@@ -1,12 +1,18 @@
-import React from "react";
+import React, {useState} from "react";
 import {Button} from "@mui/material";
+import AddDialog from "./Dialogs/AddDialog";
 
 function ManageBar() {
+    const [openAddDialog, setOpenAddDialog] = useState(false)
+
+
+
     return (
         <div>
-            <Button variant="outlined">
+            <Button variant="outlined" onClick={() => setOpenAddDialog(!openAddDialog)}>
                 Добавить
             </Button>
+            <AddDialog open={openAddDialog} setOpen={setOpenAddDialog} />
             <Button variant="outlined">
                 Изменить
             </Button>
