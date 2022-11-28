@@ -1,23 +1,17 @@
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-} from "@mui/material";
 import React from "react";
+import {Button, Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
 import AccountContent from "./AccountContent";
 
-function AddDialog(props: { open: boolean, setOpen: Function }) {
+function UpdateDialog(props: { open: boolean, setOpen: Function}) {
     const handleClose = () => {
         props.setOpen(false)
     }
 
     return (
         <Dialog open={props.open}>
-            <DialogTitle>Создание пользователя</DialogTitle>
+            <DialogTitle>Изменение пользователя</DialogTitle>
             <DialogContent style={{margin: "0 19.5px 0 19.5px"}}>
-                <AccountContent open={props.open} edit={false}/>
+                <AccountContent open={props.open} edit={true}/>
             </DialogContent>
             <DialogActions>
                 <Button type="submit" onClick={handleClose}>Подтвердить</Button>
@@ -27,4 +21,4 @@ function AddDialog(props: { open: boolean, setOpen: Function }) {
     )
 }
 
-export default AddDialog;
+export default UpdateDialog;

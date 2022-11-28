@@ -1,14 +1,16 @@
-import React, {createContext, useEffect, useState} from 'react';
+import React, {createContext, useEffect,} from 'react';
 import './App.css';
 import ManageBar from "../features/ManageBar";
 import UserTable from "../features/UserTable";
 import axios, {AxiosResponse} from "axios";
 import {ManageMsg} from "../common";
+import {useAppDispatch} from "./hooks";
+import {setManage} from "../features/manageSlice";
 
 export const ManageContext = createContext<ManageMsg | undefined>(undefined)
 
 function App() {
-    const [manageInfo, setManageInfo] = useState<ManageMsg>()
+    const dispatch = useAppDispatch()
 
     useEffect(() => {
         let href = ""
@@ -23,20 +25,18 @@ function App() {
             // action.payload,
         ).then((response: AxiosResponse<ManageMsg>) => {
             // window.alert("Пароль успешно изменён. Пожалуйста, войдите в аккаунт снова.")
-            console.log("success", response)
-            setManageInfo(response.data)
+            dispatch(setManage(response.data))
+            // setManageInfo(response.data)
         }).catch((error) => {
             window.alert(error.message)
         })
     }, [])
 
     return (
-        <ManageContext.Provider value={manageInfo}>
             <div className="App">
                 <ManageBar/>
-                <UserTable manageInfo={manageInfo}/>
+                <UserTable/>
             </div>
-        </ManageContext.Provider>
     );
 }
 

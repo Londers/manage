@@ -1,6 +1,8 @@
-import React from "react";
-import {ManageMsg} from "../common";
+import React, {useState} from "react";
+import {AccInfo, ManageMsg} from "../common";
 import {DataGrid, GridColumns, ruRU} from "@mui/x-data-grid";
+import {useAppDispatch, useAppSelector} from "../app/hooks";
+import {selectManageInfo, setSelectedLogin} from "./manageSlice";
 
 const defaultColumnOptions = {
     editable: false,
@@ -49,9 +51,13 @@ const columns: GridColumns = [
     },
 ]
 
-function UserTable(props: { manageInfo: ManageMsg | undefined }) {
+function UserTable() {
+    const manageInfo = useAppSelector(selectManageInfo)
+
+    const dispatch = useAppDispatch()
+
     const convertRows = () => {
-        return props.manageInfo?.accInfo.map((acc, index) => {
+        return manageInfo.accInfo.map((acc, index) => {
             return {
                 // id: index,
                 id: acc.login,
@@ -66,6 +72,10 @@ function UserTable(props: { manageInfo: ManageMsg | undefined }) {
 
     const rows = convertRows()
 
+    // const getUserByLogin = (login: string) => {
+    //     return manageInfo.accInfo.find(acc => acc.login === login)
+    // }
+
     return (
         <div style={{height: "92.2vh", width: "95%", marginLeft: "2.5%", marginRight: "2.5%"}}>
             {rows && <DataGrid
@@ -78,11 +88,11 @@ function UserTable(props: { manageInfo: ManageMsg | undefined }) {
                 checkboxSelection={false}
                 onSelectionModelChange={(newSelectionModel) => {
                     console.log(newSelectionModel)
-                    // props.setDevices(newSelectionModel.sort().map(selected => props.devicesInfo.devices[Number(selected)]))
-
-                    // props.setDevices(newSelectionModel.sort().map(selected => props.devicesInfo.devices[Number(selected)]))
-
-                    // dispatch(setDevices(newSelectionModel.sort().map(selected => props.devicesInfo.devices[Number(selected)])))
+                    if (typeof newSelectionModel[0] === "string") {
+                        dispatch(setSelectedLogin(newSelectionModel[0]))
+                        // props.setSelectedUser(getUserByLogin(newSelectionModel[0]))
+                        // console.log(getUserByLogin(newSelectionModel[0]))
+                    }
                 }}
                 density="comfortable"
                 // disableColumnSelector={true}

@@ -14,19 +14,19 @@ export interface Role {
 
 export interface Region {
     num: string;
-    nameRegion: string;
+    nameRegion?: string;
 }
 
 export interface Area {
     num: string;
-    nameArea: string;
+    nameArea?: string;
 }
 
 export interface AccInfo {
     login: string;
     workTime: number;
     description: string;
-    password: string;
+    password?: string;
     role: Role;
     region: Region;
     area: Area[];
@@ -67,4 +67,9 @@ export interface SendCreateMsg {
         num: string
     }[]
     description: string
+}
+
+export interface ManageSlice {
+    info: ManageMsg
+    selectedLogin: string
 }
