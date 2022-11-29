@@ -15,42 +15,42 @@ import produce from "immer";
 import {useAppSelector} from "../../app/hooks";
 import {selectManageInfo, selectUser} from "../manageSlice";
 
-function AccountContent(props: { open: boolean, edit: boolean }) {
+function AccountContent(props: { open: boolean, createMsg: AccInfo, setCreateMsg: Function}) {
     const manageInfo = useAppSelector(selectManageInfo)
-    const selectedUser = useAppSelector(selectUser) ?? {
-        area: [],
-        description: "",
-        login: "",
-        password: "",
-        region: {nameRegion: "", num: ""},
-        role: {name: "Viewer", permissions: []},
-        workTime: 12 * 60
-    }
-    const [selectedAreas, setSelectedAreas] = useState<string[]>([])
+    // const selectedUser = useAppSelector(selectUser) ?? {
+    //     area: [{nameArea: "", num: ""}],
+    //     description: "",
+    //     login: "",
+    //     password: "",
+    //     region: {nameRegion: "", num: ""},
+    //     role: {name: "Viewer", permissions: []},
+    //     workTime: 12 * 60
+    // }
+    const [selectedAreas, setSelectedAreas] = useState<string[]>((props.createMsg.area.length === 0) ? [] : Object.values(props.createMsg.area).map(q => q.nameArea ?? ""))
 
-    const [createMsg, setCreateMsg] = useState<AccInfo>(selectedUser)
+    // const [props.createMsg, props.setCreateMsg] = useState<AccInfo>(props.selectedUser)
 
-    useEffect(() => {
-        if (props.edit) {
-            setCreateMsg(selectedUser)
-        } else {
-            setCreateMsg({
-                area: [],
-                description: "",
-                login: "",
-                password: "",
-                region: {nameRegion: "", num: ""},
-                role: {name: "Viewer", permissions: []},
-                workTime: 12 * 60
-            })
-        }
-    }, [props.edit, selectedUser])
+    // useEffect(() => {
+    //     if (props.edit) {
+    //         props.setCreateMsg(selectedUser)
+    //     } else {
+    //         props.setCreateMsg({
+    //             area: [{nameArea: "", num: ""}],
+    //             description: "",
+    //             login: "",
+    //             password: "",
+    //             region: {nameRegion: "", num: ""},
+    //             role: {name: "Viewer", permissions: []},
+    //             workTime: 12 * 60
+    //         })
+    //     }
+    // }, [props.edit])
 
     // useEffect(() => {
     //     if (!manageInfo) return
-    // console.log(createMsg)
+    // console.log(props.createMsg)
     // if ()
-    // setCreateMsg({
+    // props.setCreateMsg({
     //     area: [],
     //     description: "",
     //     login: "",
@@ -62,16 +62,16 @@ function AccountContent(props: { open: boolean, edit: boolean }) {
     // }, [props.open, manageInfo])
 
     const handleLoginChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setCreateMsg({...createMsg, login: event.target.value})
+        props.setCreateMsg({...props.createMsg, login: event.target.value})
     }
 
     const handleRoleChange = (event: SelectChangeEvent) => {
-        setCreateMsg({...createMsg, role: {name: event.target.value, permissions: createMsg.role.permissions}})
+        props.setCreateMsg({...props.createMsg, role: {name: event.target.value, permissions: props.createMsg.role.permissions}})
     }
 
     const handlePermissionChange = (permission: Permission) => {
-        const permId = createMsg.role.permissions.findIndex(perm => perm === permission.id)
-        setCreateMsg(produce(createMsg, draft => {
+        const permId = props.createMsg.role.permissions.findIndex(perm => perm === permission.id)
+        props.setCreateMsg(produce(props.createMsg, draft => {
             if (permId === -1) {
                 draft.role.permissions.push(permission.id)
             } else {
@@ -83,7 +83,7 @@ function AccountContent(props: { open: boolean, edit: boolean }) {
     }
 
     const handleRegionChange = (event: SelectChangeEvent) => {
-        setCreateMsg({...createMsg, region: {num: event.target.value}, area: []})
+        props.setCreateMsg({...props.createMsg, region: {num: event.target.value}, area: []})
         setSelectedAreas([])
     }
 
@@ -98,25 +98,25 @@ function AccountContent(props: { open: boolean, edit: boolean }) {
         const gerAreaNumFromDesc = (name: string): string => {
             let retValue = ""
             if (!manageInfo) return retValue
-            Object.entries(manageInfo.areaInfo[manageInfo.regionInfo[createMsg.region.num]]).forEach(([num, desc]) => {
+            Object.entries(manageInfo.areaInfo[manageInfo.regionInfo[props.createMsg.region.num]]).forEach(([num, desc]) => {
                 if (desc === name) retValue = num
             })
             return retValue
         }
 
-        setCreateMsg({
-            ...createMsg, area: strArr.map(str => {
+        props.setCreateMsg({
+            ...props.createMsg, area: strArr.map(str => {
                 return {num: gerAreaNumFromDesc(str)}
             })
         })
     }
 
     const handleWorkTimeChange = (event: SelectChangeEvent) => {
-        setCreateMsg({...createMsg, workTime: Number(event.target.value) * 60})
+        props.setCreateMsg({...props.createMsg, workTime: Number(event.target.value) * 60})
     }
 
     const handleDescriptionChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setCreateMsg({...createMsg, description: event.target.value})
+        props.setCreateMsg({...props.createMsg, description: event.target.value})
     }
 
     return (
@@ -126,14 +126,14 @@ function AccountContent(props: { open: boolean, edit: boolean }) {
                 label="Логин"
                 // fullWidth
                 required={true}
-                value={createMsg.login}
+                value={props.createMsg.login}
                 onChange={handleLoginChange}
             />
             <FormControl sx={{width: "fit-content", minWidth: "145px", margin: "5px"}}>
                 <InputLabel id="demo-simple-select-label">Права пользователя</InputLabel>
                 <Select
                     labelId="demo-simple-select-label"
-                    value={createMsg.role.name}
+                    value={props.createMsg.role.name}
                     label="Права пользователя"
                     onChange={handleRoleChange}
                 >
@@ -147,7 +147,7 @@ function AccountContent(props: { open: boolean, edit: boolean }) {
                     <FormControlLabel
                         control={
                             <Checkbox
-                                checked={createMsg.role.permissions.find(permission => permission === perm.id) !== undefined}
+                                checked={props.createMsg.role.permissions.find(permission => permission === perm.id) !== undefined}
                                 onChange={() => handlePermissionChange(perm)}/>
                         }
                         label={perm.description}
@@ -156,55 +156,62 @@ function AccountContent(props: { open: boolean, edit: boolean }) {
                     <br/>
                 </div>)
             }
-            {manageInfo && <>
-                <FormControl sx={{marginTop: "2vh", marginRight: "1vw", width: "250px"}}>
-                    <InputLabel id="demo-simple-select-label">Регион</InputLabel>
-                    <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={createMsg.region.num}
-                        label="Регион"
-                        disabled={Object.entries(manageInfo?.regionInfo ?? {}).length === 1}
-                        onChange={handleRegionChange}
-                    >
-                        {
-                            Object.entries(manageInfo?.regionInfo ?? {}).map(([regionNum, regionName]) =>
-                                <MenuItem value={regionNum} key={regionNum}>{regionName}</MenuItem>
-                            )
-                        }
-                    </Select>
-                </FormControl>
-                <FormControl sx={{marginTop: "2vh", width: "250px"}}>
-                    <InputLabel id="demo-multiple-chip-label">Район</InputLabel>
-                    <Select
-                        labelId="demo-multiple-chip-label"
-                        id="demo-multiple-chip-select"
-                        required={true}
-                        multiple
-                        value={selectedAreas}
-                        onChange={handleAreasChange}
-                        input={<OutlinedInput label="Район"/>}
-                        renderValue={(selected) => (
-                            <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 0.5}}>
-                                {selected.map((value) => (
-                                    <Chip key={value} label={value}/>
-                                ))}
-                            </Box>
-                        )}
-                    >
-                        {createMsg.region.num !== "" &&
-                            Object.entries(manageInfo?.areaInfo[manageInfo.regionInfo[Number(createMsg.region.num)]]).map(([name, value]) =>
-                                <MenuItem key={name} value={value}>{value}</MenuItem>
-                            )
-                        }
-                    </Select>
-                </FormControl>
-            </>}
+            {manageInfo &&
+                <>
+                    <FormControl sx={{marginTop: "2vh", marginRight: "1vw", width: "250px"}}>
+                        <InputLabel id="demo-simple-select-label">Регион</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={props.createMsg.region.num}
+                            label="Регион"
+                            disabled={Object.entries(manageInfo?.regionInfo ?? {}).length === 1}
+                            onChange={handleRegionChange}
+                        >
+                            {
+                                props.createMsg.region.num !== "" &&
+                                props.createMsg.region.num === "*" ?
+                                    <MenuItem value={props.createMsg.region.num}>{props.createMsg.region.nameRegion}</MenuItem> :
+                                    Object.entries(manageInfo?.regionInfo ?? {}).map(([regionNum, regionName]) =>
+                                        <MenuItem value={regionNum} key={regionNum}>{regionName}</MenuItem>
+                                    )
+                            }
+                            {props.createMsg.role.name === "Admin" && <MenuItem value="*">Все регионы</MenuItem>}
+                        </Select>
+                    </FormControl>
+                    <FormControl sx={{marginTop: "2vh", width: "250px"}}>
+                        <InputLabel id="demo-multiple-chip-label">Район</InputLabel>
+                        <Select
+                            labelId="demo-multiple-chip-label"
+                            id="demo-multiple-chip-select"
+                            required={true}
+                            multiple
+                            value={selectedAreas}
+                            onChange={handleAreasChange}
+                            input={<OutlinedInput label="Район"/>}
+                            renderValue={(selected) => (
+                                <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 0.5}}>
+                                    {selected.map((value) => (
+                                        <Chip key={value} label={value}/>
+                                    ))}
+                                </Box>
+                            )}
+                        >
+                            {
+                                    Object.entries(manageInfo?.areaInfo[manageInfo.regionInfo[Number(props.createMsg.region.num)]] ?? {}).map(([name, value]) =>
+                                        <MenuItem key={name} value={value}>{value}</MenuItem>
+                                    )
+                            }
+                            {props.createMsg.role.name === "Admin" && <MenuItem value="*">Все районы</MenuItem>}
+                        </Select>
+                    </FormControl>
+                </>
+            }
             <FormControl sx={{width: "fit-content", minWidth: "165px", margin: "10px 10px 0 0"}}>
                 <InputLabel id="demo-simple-select-label">Время рабочего сеанса</InputLabel>
                 <Select
                     labelId="demo-simple-select-label"
-                    value={(createMsg.workTime / 60).toString()}
+                    value={(props.createMsg.workTime / 60).toString()}
                     label="Время рабочего сеанса"
                     onChange={handleWorkTimeChange}
                 >
@@ -217,7 +224,7 @@ function AccountContent(props: { open: boolean, edit: boolean }) {
                 label="Название АРМа"
                 fullWidth
                 // style={{width: "700px"}}
-                value={createMsg.description}
+                value={props.createMsg.description}
                 onChange={handleDescriptionChange}
             />
         </>
