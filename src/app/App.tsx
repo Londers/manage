@@ -15,7 +15,7 @@ function App() {
     useEffect(() => {
         let href = ""
         if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
-            href = "https://192.168.115.134:4443/user/Admin/manage"
+            href = "https://192.168.115.134:4443/user/TechAutomatic/manage"
             // href = "https://192.168.0.101:4443/user/Admin/manage"
         } else {
             href = window.location.href
