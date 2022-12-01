@@ -14,18 +14,13 @@ function UpdateDialog(props: { open: boolean, setOpen: Function}) {
         if (createMsg.login === "" || createMsg.area.length === 0 || createMsg.description === "") return
         props.setOpen(false)
         axios.post(
-            // window.location.href + "/update",
-            "https://192.168.115.134:4443/user/TechAutomatic/manage/update",
+            window.location.href + "/update",
             createMsg
         ).then((response: AxiosResponse<ManageMsg>) => {
             axios.post(
-                // window.location.href,
-                "https://192.168.115.134:4443/user/TechAutomatic/manage"
-                // action.payload,
+                window.location.href,
             ).then((response: AxiosResponse<ManageMsg>) => {
-                // window.alert("Пароль успешно изменён. Пожалуйста, войдите в аккаунт снова.")
                 dispatch(setManage(response.data))
-                // setManageInfo(response.data)
             }).catch((error) => {
                 window.alert(error.message)
             })

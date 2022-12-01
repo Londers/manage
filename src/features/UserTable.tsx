@@ -1,5 +1,4 @@
-import React, {useState} from "react";
-import {AccInfo, ManageMsg} from "../common";
+import React from "react";
 import {DataGrid, GridColumns, ruRU} from "@mui/x-data-grid";
 import {useAppDispatch, useAppSelector} from "../app/hooks";
 import {selectManageInfo, setSelectedLogin} from "./manageSlice";
@@ -57,9 +56,8 @@ function UserTable() {
     const dispatch = useAppDispatch()
 
     const convertRows = () => {
-        return manageInfo.accInfo.map((acc, index) => {
+        return manageInfo.accInfo.map(acc => {
             return {
-                // id: index,
                 id: acc.login,
                 privileges: acc.role.name,
                 region: acc.region.nameRegion,
@@ -71,10 +69,6 @@ function UserTable() {
     }
 
     const rows = convertRows()
-
-    // const getUserByLogin = (login: string) => {
-    //     return manageInfo.accInfo.find(acc => acc.login === login)
-    // }
 
     return (
         <div style={{height: "92.2vh", width: "95%", marginLeft: "2.5%", marginRight: "2.5%"}}>
@@ -90,20 +84,9 @@ function UserTable() {
                     console.log(newSelectionModel)
                     if (typeof newSelectionModel[0] === "string") {
                         dispatch(setSelectedLogin(newSelectionModel[0]))
-                        // props.setSelectedUser(getUserByLogin(newSelectionModel[0]))
-                        // console.log(getUserByLogin(newSelectionModel[0]))
                     }
                 }}
                 density="comfortable"
-                // disableColumnSelector={true}
-                // disableColumnFilter={true}
-                // disableDensitySelector={true}
-                // componentsProps={{
-                //     toolbar: {
-                //         showQuickFilter: true,
-                //         quickFilterProps: {debounceMs: 500},
-                //     },
-                // }}
             />}
         </div>
     )

@@ -52,24 +52,13 @@ export interface Permission {
 export interface PermInfo {
     [index: string]: Permission
 }
-
-export interface SendCreateMsg {
-    login: string
-    workTime: number
-    role: {
-        name: string
-        permissions: number[]
-    }
-    region: {
-        num: string
-    }
-    area: {
-        num: string
-    }[]
-    description: string
-}
-
 export interface ManageSlice {
     info: ManageMsg
     selectedLogin: string
+}
+
+export interface PassRequest {
+    login: string
+    message: string
+    pass: string
 }

@@ -100,7 +100,6 @@ function AccountContent(props: { open: boolean, createMsg: AccInfo, setCreateMsg
             <TextField
                 style={{margin: "5px"}}
                 label="Логин"
-                // fullWidth
                 required={true}
                 value={props.createMsg.login}
                 onChange={handleLoginChange}
@@ -150,9 +149,6 @@ function AccountContent(props: { open: boolean, createMsg: AccInfo, setCreateMsg
                         >
                             {
                                 props.createMsg.region.num !== "" &&
-                                // props.createMsg.region.num === "*" ?
-                                //     <MenuItem
-                                //         value={props.createMsg.region.num}>{manageInfo.regionInfo[props.createMsg.region.num]}</MenuItem> :
                                 Object.entries(manageInfo?.regionInfo ?? {}).map(([regionNum, regionName]) =>
                                     <MenuItem value={regionNum} key={regionNum}
                                               style={{display: (props.createMsg.role.name !== "Admin") && (regionNum === "*") ? "none" : ""}}>{regionName}</MenuItem>

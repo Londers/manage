@@ -7,14 +7,19 @@ import {
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
 import AccountContent from "./AccountContent";
-import {AccInfo, ManageMsg} from "../../common";
+import {AccInfo, ManageMsg, PassRequest} from "../../common";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {selectManageInfo, setManage} from "../manageSlice";
 import axios, {AxiosResponse} from "axios";
+import PasswordDialog from "./PasswordDialog";
 
 function AddDialog(props: { open: boolean, setOpen: Function }) {
     const dispatch = useAppDispatch()
     const manageInfo = useAppSelector(selectManageInfo)
+
+    const [openPass, setOpenPass] = useState<boolean>(false)
+    const [login, setLogin] = useState<string>("")
+    const [password, setPassword] = useState<string>("")
 
     const handleConfirm = () => {
         console.log(createMsg)
@@ -22,18 +27,16 @@ function AddDialog(props: { open: boolean, setOpen: Function }) {
         props.setOpen(false)
 
         axios.post(
-            // window.location.href + "/add",
-            "https://192.168.115.134:4443/user/TechAutomatic/manage/add",
+            window.location.href + "/add",
             createMsg
-        ).then((response: AxiosResponse<ManageMsg>) => {
+        ).then((response: AxiosResponse<PassRequest>) => {
+            setLogin(response.data.login)
+            setPassword(response.data.pass)
+            setOpenPass(true)
             axios.post(
-                // window.location.href,
-                "https://192.168.115.134:4443/user/TechAutomatic/manage"
-                // action.payload,
+                window.location.href,
             ).then((response: AxiosResponse<ManageMsg>) => {
-                // window.alert("Пароль успешно изменён. Пожалуйста, войдите в аккаунт снова.")
                 dispatch(setManage(response.data))
-                // setManageInfo(response.data)
             }).catch((error) => {
                 window.alert(error.message)
             })
@@ -66,16 +69,19 @@ function AddDialog(props: { open: boolean, setOpen: Function }) {
     }, [manageInfo, props.open])
 
     return (
-        <Dialog open={props.open}>
-            <DialogTitle>Создание пользователя</DialogTitle>
-            <DialogContent style={{margin: "0 19.5px 0 19.5px"}}>
-                <AccountContent open={props.open} createMsg={createMsg} setCreateMsg={setCreateMsg}/>
-            </DialogContent>
-            <DialogActions>
-                <Button type="submit" onClick={handleConfirm}>Подтвердить</Button>
-                <Button onClick={() => props.setOpen(false)}>Отмена</Button>
-            </DialogActions>
-        </Dialog>
+        <div>
+            <Dialog open={props.open}>
+                <DialogTitle>Создание пользователя</DialogTitle>
+                <DialogContent style={{margin: "0 19.5px 0 19.5px"}}>
+                    <AccountContent open={props.open} createMsg={createMsg} setCreateMsg={setCreateMsg}/>
+                </DialogContent>
+                <DialogActions>
+                    <Button type="submit" onClick={handleConfirm}>Подтвердить</Button>
+                    <Button onClick={() => props.setOpen(false)}>Отмена</Button>
+                </DialogActions>
+            </Dialog>
+            <PasswordDialog open={openPass} setOpen={setOpenPass} login={login} password={password} />
+        </div>
     )
 }
 
